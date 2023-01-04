@@ -82,9 +82,9 @@ gui.add(cube, "visible").name("是否显示");
 // gui.add(params, "fn").name("物体运动");
 
 // 打组
-let folder = gui.folder()
-folder.add(cube.material,'')
-folder.add(params, "fn").name("物体运动");
+let folder = gui.addFolder('设置立方体')
+folder.add(cube.material,'wireframe')
+// folder.add(params, "fn").name("物体运动");
 
 // 初始化渲染器
 const renderer = new THREE.WebGL1Renderer();

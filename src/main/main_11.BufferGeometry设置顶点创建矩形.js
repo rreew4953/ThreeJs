@@ -26,16 +26,26 @@ camera.position.set(0, 0, 10);
 //  添加相机到场景
 scene.add(camera);
 
-// 添加 缓冲立方体 (长 宽 高)
-const cubeGeomertry = new THREE.BufferGeometry(1, 1, 1);
-let vertices = Float32Array([
-  -1.0,-1.0,1.0,
-  1.0,-1.0,-1.0,
-  1.0,1.0,1.0,
-])
+// 添加物体 缓冲立方体 (长 宽 高)
+const cubeGeomertry = new THREE.BoxGeometry(1, 1, 1);
 // 创建材质
-const Material = new THREE.MeshBasicMaterial({ color: "red" });
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: "red" });
+// 基于集合体和材质创建物体
+const cube = new THREE.Mesh(cubeGeomertry, cubeMaterial);
 
+// 对物体的属性 操作
+// 修改物体的位置  cube.position.x y z = 或 set（）
+// position 是一个 vector3 三维向量对象  x y z
+cube.position.set(0, 0, 0);
+
+// 缩放物体 方法同移动
+cube.scale.set(3, 2, 1);
+
+// 旋转 Math.PI === 180  (x, y, z, 旋转顺序)
+cube.rotation.set(Math.PI / 4, 0, 0, "XYZ");
+
+// 将几何体添加进场景
+scene.add(cube);
 
 console.log(cube); // 具有一些 属性
 
