@@ -30,32 +30,71 @@ scene.add(camera);
 const textureLoader = new THREE.TextureLoader();
 const doorColorTexture = textureLoader.load("./textures/door/color.jpg");
 const doorAplhaTexture = textureLoader.load("./textures/door/aplha.png");
+const doorAoTexture = textureLoader.load("./textures/door/ambientOcclusion.jpg");
 
-// 添加 缓冲立方体 (长 宽 高)
-const cubeGeomertry = new THREE.BufferGeometry(1, 1, 1);
+//  导入置换贴图
+const doorHeightTexture = textureLoader.load("./textures/door/height.jpg");
+
+
+
+// 添加细分 缓冲立方体 (长 宽 高) widthSegments heightSegments deepSegments 100 100 100
+const cubeGeomertry = new THREE.BufferGeometry(1, 1, 1, 100, 100, 100);
 let vertices = Float32Array([-1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0]);
 // 创建材质
 // const basicMaterial = new THREE.MeshBasicMaterial({ color: "red" });
-const basicMaterial = new THREE.MeshBasicMaterial({
+// const basicMaterial = new THREE.MeshBasicMaterial({
+//   color: "red",
+//   map: doorColorTexture,
+//   alphaMap: doorAplhaTexture,
+//   transparent : true,
+//   // opacity: 0.5,
+//   side: THREE.DoubleSide,
+// });
+
+const material = new THREE.MeshStandardMaterial({
   color: "red",
   map: doorColorTexture,
   alphaMap: doorAplhaTexture,
-  transparent : true,
+  transparent: true,
   // opacity: 0.5,
   side: THREE.DoubleSide,
+  aoMap: doorAoTexture,
+  aoMapIntensity: 1,
+  displacementMap: doorHeightTexture,
+  displacementScale: 0.1,
 });
-basicMaterial.side = THREE.DoubleSide
-const cube = new THREE.Mesh(cubeGeomertry, basicMaterial)
+// basicMaterial.side = THREE.DoubleSide
+material.side = THREE.DoubleSide;
+// const cube = new THREE.Mesh(cubeGeomertry, basicMaterial)
+const cube = new THREE.Mesh(cubeGeomertry, material);
 console.log(cube); // 具有一些 属性
-scene.add(cube)
+scene.add(cube);
 
-// 添加平面
-const plane = new THREE.Mesh(
-  new THREE.PlaneBufferGeometry(1,1 )
-)
-plane.position.set(3,0,0)
-scene.add(plane)
+// 添加平面 - 增加平面段数 widthSegments heightSegments 200 200
+const planeGeometry = new THREE.PlaneBufferGeometry(1, 1,200,200);
+// const plane = new THREE.Mesh(
+//   new THREE.PlaneBufferGeometry(1,1 )
+// )
+const plane = new THREE.Mesh(planeGeometry, material);
 
+plane.position.set(3, 0, 0);
+scene.add(plane);
+
+// console.log(plane)
+// 给平面设置第二组 uv
+planeGeometry.setAttribute(
+  "uv",
+  new THREE.BufferAttribute(planeGeometry.attributes.uv.array, 2)
+);
+
+// 灯光 - 环境光
+const light = new THREE.AmbientLight(0xfffff,0.5) // soft white light
+scene.add(light)
+
+// 灯光 - 平行光
+const directionalLight = new THREE.DirectionalLight(0xfffff,0.5)
+directionalLight.position.set(10.10,10)
+scene.add(directionalLight)
 
 // 创建 GUI 面板
 const gui = new dat.GUI();
